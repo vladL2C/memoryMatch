@@ -1,5 +1,10 @@
 //global variables go here:
-
+var clickedArray = [];
+var interval;
+var started = false;
+var time = 0;
+var ready = true;
+var numCompleted = 0;
 
 //execute functions here:
 setUp();
@@ -7,12 +12,40 @@ setUp();
 
 //function definitions go here:
 
+function hide(cell){
+	cell.style.backgroundColor = "blue";
+	cell.innerHTML = "";
+	cell.clicked = false;
+}
+
+function complete(cell){
+	numCompleted++;
+	cell.completed = true;
+	cell.style.backgroundColor = "purple";
+}
+
 function randomAnswers(){
 	var answers = [1,1,2,2,3,3,4,4,5];
 	answers.sort(function(item){
 		return 0.5 - Math.random();
 	});
 	return answers;
+}
+
+function reveal(cell){
+	cell.style.backgroundColor = 'red';
+	cell.innerHTML = cell.value;
+	cell.clicked = true;
+}
+
+function startTimer(){
+	if (started == false){
+		interval = setInterval(function(){
+			time++;
+			document.getElementById("timer").innerHTML = "Time Elapsed: " + time;
+		},1000);
+		started = true;
+	}
 }
 
 function setUp(){
@@ -23,7 +56,6 @@ function setUp(){
 		cell.completed = false;
 		cell.clicked = false;
 		cell.value = answers[i];
-
 		cell.addEventListener("mouseenter",function(){
         if(this.completed == false && this.clicked == false)
             this.style.background = "orange";
@@ -35,8 +67,13 @@ function setUp(){
     });
 
     cell.addEventListener('click',function(){
-
+    	startTimer();
+    	if(this.clicked == false && this.completed == false){
+    		clickedArray.push(this);
+    		reveal(this);
+    	}
 
     });
 	}
 }
+
